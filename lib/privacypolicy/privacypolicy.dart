@@ -3,6 +3,8 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:returnpostuser/authentication/signinpage.dart';
+import 'package:returnpostuser/mainscreen/mainscreen.dart';
+import 'package:returnpostuser/mainscreen/vehicle_setting.dart';
 import 'package:returnpostuser/photo/snapaphoto.dart';
 
 class PrivacyPolicy extends StatefulWidget {
@@ -221,8 +223,10 @@ class _PrivacyPolicyState extends State<PrivacyPolicy> {
                     borderRadius: BorderRadius.circular(23)),
               ),
               onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => Signinpage()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const VehicleSettings()));
               },
               child: Text(
                 'Ready',

@@ -29,18 +29,18 @@ class _ProfileSettingsState extends State<ProfileSettings> {
   TextEditingController _addRegController = TextEditingController();
 
   saveInfo() async {
-    String res = await DataBaseMethods().addVecihleInfo(
-                vechileName: Carname,
-                vechileType: CarType,
-                vechilRegistration: CarRegistration,
-              );
-              print(Carname);
-              print(res);
-    setState(() {
-      Carname = _addNameController.text;
-      CarType = _addTypeController.text;
-      CarRegistration = _addRegController.text;
-    });
+    // String res = await DataBaseMethods().addVecihleInfo(
+    //             vechileName: Carname,
+    //             vechileType: CarType,
+    //             vechilRegistration: CarRegistration,
+    //           );
+    //           print(Carname);
+    //           print(res);
+    // setState(() {
+    //   Carname = _addNameController.text;
+    //   CarType = _addTypeController.text;
+    //   CarRegistration = _addRegController.text;
+    // });
   }
 
   _addVehicleInfo(TextEditingController textEditingController) {
@@ -226,14 +226,16 @@ class _ProfileSettingsState extends State<ProfileSettings> {
           ),
           Container(
             margin: EdgeInsets.only(top: 10, left: 30),
-            child:widget.address != null?  Text(widget.address!,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                )) : Container(
-                  height: 20,
-                  width: 20,
-                  child: const CircularProgressIndicator.adaptive()),
+            child: widget.address != null
+                ? Text(widget.address!,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                    ))
+                : Container(
+                    height: 20,
+                    width: 20,
+                    child: const CircularProgressIndicator.adaptive()),
           ),
           Container(
             margin: EdgeInsets.only(top: 10, left: 30),
@@ -470,8 +472,6 @@ class _ProfileSettingsState extends State<ProfileSettings> {
           ),
           ElevatedButton(
             onPressed: saveInfo,
-              
-            
             child: Text("Submit"),
           )
         ],

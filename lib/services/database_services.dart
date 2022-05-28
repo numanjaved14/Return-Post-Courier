@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:returnpostuser/models/usermodel.dart';
 import 'package:returnpostuser/models/vehicle_model.dart';
+import 'package:returnpostuser/models/usermodel.dart' as model;
 import 'package:returnpostuser/services/storage_methods.dart';
 
 class DataBaseMethods {
@@ -23,8 +24,7 @@ class DataBaseMethods {
   }
 
   Future<String> registerUser(
-      {
-      required String email,
+      {required String email,
       required String password,
       required String username,
       String? referalCode,
@@ -51,6 +51,7 @@ class DataBaseMethods {
           photoUrl: photoUrl,
           referal: referalCode,
           address: address,
+          isApproved: false,
         );
 
         await _firestore.collection('users').doc(cred.user!.uid).set(
@@ -85,6 +86,8 @@ class DataBaseMethods {
           username: username,
           referal: referalCode,
           address: address,
+          isApproved: false,
+          isDeclined: false,
         );
 
         await _firestore.collection('users').doc(id).update(
@@ -96,8 +99,6 @@ class DataBaseMethods {
       return res = e.toString();
     }
     return res;
-
-    // _firebaseAuth.createUserWithEmailAndPassword(email: email, password: password)
   }
 
   Future loginUser(String email, String password) async {
@@ -123,35 +124,55 @@ class DataBaseMethods {
   }
 
   Future<String> addVecihleInfo({
-   required String? vechileName,
-   required String? vechileType,
-   required String? vechilRegistration,
-    Uint8List? file,
+    required String email,
+    required String userName,
+    required String address,
+    required String referal,
+    required String photoUrl,
+    required String vechileName,
+    required String vechileType,
+    required String vechilRegistration,
+    required bool isApproved,
     String res = "Some Error Occured",
   }) async {
-    
+    if (vechileName.isNotEmpty || vechilRegistration.isNotEmpty) {
+      try {
+        // if(){}
+        // saving document
+        // String documentUrl = await StorageMethods()
+        //     .uploadImageToStorage('vecihleDocuments', file!);
 
-    if(vechileName!.isNotEmpty || vechilRegistration!.isNotEmpty )
-   { 
-     try {
-      // if(){}
-      // saving document
-      String documentUrl = await StorageMethods()
-          .uploadImageToStorage('vecihleDocuments', file!);
-
-          VehicleModel vehicleModel = VehicleModel(
-           vehicleName : vechileName,
-           vehiclRegistration: vechilRegistration,
-           vehicleType : vechileType,
-            file: documentUrl,
-          );
-           await _firestore.collection('VehicleInfo').doc(_firebaseAuth.currentUser!.uid).set(
-              vehicleModel.toJSon(),
+        // VehicleModel vehicleModel = VehicleModel(
+        //   vehicleName: vechileName,
+        //   vehiclRegistration: vechilRegistration,
+        //   vehicleType: vechileType,
+        //   file: documentUrl,
+        // );
+        model.UserModel user = model.UserModel(
+          photoUrl: photoUrl,
+          vehicleName: vechileName,
+          vehicleRegNo: vechilRegistration,
+          vehicleType: vechileType,
+          email: email,
+          username: userName,
+          uid: _firebaseAuth.currentUser!.uid,
+          // password: password,
+          address: address,
+          referal: referal,
+          // photoUrl: photoUrl,
+          isApproved: false,
+        );
+        await _firestore
+            .collection('users')
+            .doc(_firebaseAuth.currentUser!.uid)
+            .update(
+              user.toJSon(),
             );
         return res = 'added successfully';
-    } catch (e) {
-      print(e.toString());
-    }}
+      } catch (e) {
+        print(e.toString());
+      }
+    }
     return res;
   }
 }

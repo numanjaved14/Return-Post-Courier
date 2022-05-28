@@ -1,3 +1,7 @@
+import 'dart:ui';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:returnpostuser/mainscreen/maptracking.dart';
@@ -11,87 +15,134 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
+  var userData = {};
+  // bool isApproved = false;
+  bool isLoading = false;
+
   var scalfoldKey = GlobalKey<ScaffoldState>();
+
+  @override
+  void initState() {
+    super.initState();
+    getData();
+  }
+
+  getData() async {
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      var userSnap = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get();
+
+      userData = userSnap.data()!;
+    } catch (e) {}
+    setState(() {
+      isLoading = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return 
-    
-    Scaffold(
-      key: scalfoldKey,
-      drawer: MyDrawer(),
-      backgroundColor: Color(0xff404040),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-             Container(
-                margin: EdgeInsets.only(top: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    InkWell(
-                      onTap: () {
-                        scalfoldKey.currentState!.openDrawer();
-                      },
-                      child: Image.asset(
-                        'assets/menu.png',
+    return isLoading
+        ? const Center(
+            child: CircularProgressIndicator(),
+          )
+        : userData['isApproved'] == true
+            ? Scaffold(
+                key: scalfoldKey,
+                drawer: MyDrawer(),
+                backgroundColor: Color(0xff404040),
+                body: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        margin: EdgeInsets.only(top: 20),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            InkWell(
+                              onTap: () {
+                                scalfoldKey.currentState!.openDrawer();
+                              },
+                              child: Image.asset(
+                                'assets/menu.png',
+                                fit: BoxFit.cover,
+                                width: 90,
+                                height: 70,
+                              ),
+                            ),
+                            InkWell(
+                              onTap: () {},
+                              child: Image.asset(
+                                'assets/search.png',
+                                width: 90,
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                      Image.asset(
+                        'assets/map.png',
+                        height: 440,
+                        width: MediaQuery.of(context).size.width,
                         fit: BoxFit.cover,
-                        width: 90,
-                        height: 70,
                       ),
-                    ),
-                    InkWell(
-                      onTap: () {},
-                      child: Image.asset(
-                        'assets/search.png',
-                        width: 90,
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              Image.asset(
-                'assets/map.png',
-                height: 440,
-                width: MediaQuery.of(context).size.width,
-                fit: BoxFit.cover,
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    InkWell(
-                        child: Image.asset(
-                      'assets/mapone.png',
-                      fit: BoxFit.fitWidth,
-                      width: 50,
-                      height: 50,
-                    )),
-                    InkWell(
-                        child: Image.asset(
-                      'assets/maptwo.png',
-                      fit: BoxFit.cover,
-                      width: 80,
-                      height: 80,
-                    )),
-                    InkWell(
-                      onTap: () => showFirsttModal(context),
-                      child: Image.asset('assets/mapthree.png',
-                          fit: BoxFit.cover, width: 80, height: 80),
-                    ),
-                  ],
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            InkWell(
+                                child: Image.asset(
+                              'assets/mapone.png',
+                              fit: BoxFit.fitWidth,
+                              width: 50,
+                              height: 50,
+                            )),
+                            InkWell(
+                                child: Image.asset(
+                              'assets/maptwo.png',
+                              fit: BoxFit.cover,
+                              width: 80,
+                              height: 80,
+                            )),
+                            InkWell(
+                              onTap: () => showFirsttModal(context),
+                              child: Image.asset('assets/mapthree.png',
+                                  fit: BoxFit.cover, width: 80, height: 80),
+                            ),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
                 ),
               )
-          ],
-        ),
-      ),
-    );
+            : Scaffold(
+                body: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      'You are not approved by the admin yet',
+                      style: Theme.of(context).textTheme.headline5,
+                    ),
+                    Text(
+                      'You will soon contacted by our team',
+                      style: Theme.of(context).textTheme.subtitle2,
+                    ),
+                  ],
+                ),
+              );
   }
 
   showFirsttModal(BuildContext context) {
-     showModalBottomSheet<void>(
+    showModalBottomSheet<void>(
       backgroundColor: Colors.transparent,
       context: context,
       builder: (BuildContext context) {
@@ -179,11 +230,15 @@ class _MainScreenState extends State<MainScreen> {
                           textAlign: TextAlign.start,
                         ),
                       ),
-                     Container(
-                       margin: EdgeInsets.symmetric(horizontal: 20),
-                       child: Image.asset('assets/divider.png',width: 310,)),
                       Container(
-                        margin: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                          margin: EdgeInsets.symmetric(horizontal: 20),
+                          child: Image.asset(
+                            'assets/divider.png',
+                            width: 310,
+                          )),
+                      Container(
+                        margin:
+                            EdgeInsets.symmetric(horizontal: 30, vertical: 10),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -213,7 +268,8 @@ class _MainScreenState extends State<MainScreen> {
                         ),
                       ),
                       Container(
-                        margin: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                        margin:
+                            EdgeInsets.symmetric(horizontal: 30, vertical: 10),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -243,7 +299,8 @@ class _MainScreenState extends State<MainScreen> {
                         ),
                       ),
                       Container(
-                        margin: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                        margin:
+                            EdgeInsets.symmetric(horizontal: 30, vertical: 10),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -317,7 +374,7 @@ class _MainScreenState extends State<MainScreen> {
                         ),
                       ),
                       Container(
-                        margin: EdgeInsets.only(top: 20, right: 20,left: 20),
+                        margin: EdgeInsets.only(top: 20, right: 20, left: 20),
                         child: Center(
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
@@ -347,10 +404,8 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
- 
-
   void newNavigatorbar(BuildContext context) {
-     showModalBottomSheet<void>(
+    showModalBottomSheet<void>(
       backgroundColor: Colors.transparent,
       context: context,
       builder: (BuildContext context) {
@@ -406,38 +461,38 @@ class _MainScreenState extends State<MainScreen> {
                           ],
                         ),
                       ),
-                        ListTile(
-                      leading: Padding(
-                        padding: const EdgeInsets.only(top: 10.0),
-                        child: Image.asset(
-                          'assets/circle.png',
-                          height: 30,
-                          width: 30,
+                      ListTile(
+                        leading: Padding(
+                          padding: const EdgeInsets.only(top: 10.0),
+                          child: Image.asset(
+                            'assets/circle.png',
+                            height: 30,
+                            width: 30,
+                          ),
+                        ),
+                        title: Text(
+                          'Pick up',
+                          style: GoogleFonts.getFont(
+                            'Montserrat',
+                            fontWeight: FontWeight.w500,
+                            color: Color(0xff8D8989),
+                            fontSize: 14,
+                            fontStyle: FontStyle.normal,
+                          ),
+                          textAlign: TextAlign.start,
+                        ),
+                        subtitle: Text(
+                          '12 Blueberry Ln, London, EC5M 6JN',
+                          style: GoogleFonts.getFont(
+                            'Montserrat',
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
+                            fontSize: 15,
+                            fontStyle: FontStyle.normal,
+                          ),
+                          textAlign: TextAlign.start,
                         ),
                       ),
-                      title: Text(
-                        'Pick up',
-                        style: GoogleFonts.getFont(
-                          'Montserrat',
-                          fontWeight: FontWeight.w500,
-                          color: Color(0xff8D8989),
-                          fontSize: 14,
-                          fontStyle: FontStyle.normal,
-                        ),
-                        textAlign: TextAlign.start,
-                      ),
-                      subtitle: Text(
-                        '12 Blueberry Ln, London, EC5M 6JN',
-                        style: GoogleFonts.getFont(
-                          'Montserrat',
-                          fontWeight: FontWeight.w700,
-                          color: Colors.white,
-                          fontSize: 15,
-                          fontStyle: FontStyle.normal,
-                        ),
-                        textAlign: TextAlign.start,
-                      ),
-                    ),
                       ListTile(
                         leading: Padding(
                           padding: const EdgeInsets.only(top: 10.0),
@@ -471,10 +526,14 @@ class _MainScreenState extends State<MainScreen> {
                         ),
                       ),
                       Container(
-                       margin: EdgeInsets.symmetric(horizontal: 20),
-                       child: Image.asset('assets/divider.png',width: 310,)),
+                          margin: EdgeInsets.symmetric(horizontal: 20),
+                          child: Image.asset(
+                            'assets/divider.png',
+                            width: 310,
+                          )),
                       Container(
-                        margin: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                        margin:
+                            EdgeInsets.symmetric(horizontal: 30, vertical: 10),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -504,7 +563,8 @@ class _MainScreenState extends State<MainScreen> {
                         ),
                       ),
                       Container(
-                        margin: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                        margin:
+                            EdgeInsets.symmetric(horizontal: 30, vertical: 10),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -534,7 +594,8 @@ class _MainScreenState extends State<MainScreen> {
                         ),
                       ),
                       Container(
-                        margin: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                        margin:
+                            EdgeInsets.symmetric(horizontal: 30, vertical: 10),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -608,7 +669,8 @@ class _MainScreenState extends State<MainScreen> {
                         ),
                       ),
                       Container(
-                        margin: EdgeInsets.only(top: 20, left: 20, right: 20,bottom: 20),
+                        margin: EdgeInsets.only(
+                            top: 20, left: 20, right: 20, bottom: 20),
                         child: Center(
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
@@ -618,7 +680,10 @@ class _MainScreenState extends State<MainScreen> {
                                   borderRadius: BorderRadius.circular(23)),
                             ),
                             onPressed: () {
-                             Navigator.push(context, MaterialPageRoute(builder: (builder) => MapTracking()));
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (builder) => MapTracking()));
                             },
                             child: Text(
                               'Start navigation',
@@ -635,6 +700,6 @@ class _MainScreenState extends State<MainScreen> {
           ],
         );
       },
-    );}
-  
+    );
+  }
 }

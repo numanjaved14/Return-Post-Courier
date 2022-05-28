@@ -63,7 +63,7 @@ class _SigninpageState extends State<Signinpage> {
                         //  textAlign: TextAlign.start,
                         decoration: InputDecoration(
                           hintText: ' email...',
-                          contentPadding:const EdgeInsets.only(
+                          contentPadding: const EdgeInsets.only(
                             top: 10,
                             left: 20,
                           ),
@@ -82,7 +82,8 @@ class _SigninpageState extends State<Signinpage> {
                       )),
                   Container(
                       height: 60,
-                      margin:const EdgeInsets.only(left: 30, right: 30, top: 28),
+                      margin:
+                          const EdgeInsets.only(left: 30, right: 30, top: 28),
 
                       //  padding: const EdgeInsets.all(3.0),
                       decoration: BoxDecoration(
@@ -152,12 +153,12 @@ class _SigninpageState extends State<Signinpage> {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(24)),
                 ),
-                onPressed: () {
+                onPressed: () async {
                   if (formKey.currentState!.validate())
                     setState(() {
                       formStateLoading = true;
                     });
-                  DataBaseMethods()
+                  await DataBaseMethods()
                       .loginUser(
                         _emailController.text,
                         _passwordController.text,

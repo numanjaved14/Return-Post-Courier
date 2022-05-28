@@ -1,9 +1,12 @@
 import 'dart:typed_data';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:returnpostuser/authentication/signinpage.dart';
+import 'package:returnpostuser/mainscreen/mainscreen.dart';
 import 'package:returnpostuser/privacypolicy/privacypolicy.dart';
 import 'package:returnpostuser/services/database_services.dart';
 import 'package:returnpostuser/utils/utils.dart';
@@ -30,20 +33,26 @@ class _VehicleSettingsState extends State<VehicleSettings> {
 
   Uint8List? _image;
 
+  var prevData;
+
   bool _isLoading = false;
   saveInfo() async {
     String res = await DataBaseMethods().addVecihleInfo(
-                vechileName: _addNameController.text,
-                vechileType: _addTypeController.text,
-                vechilRegistration: _addRegController.text,
-              );
-              print(_addNameController.text);
-              print(_addTypeController.text);
-              print( _addRegController.text);
-
-
-              print(res);
-    
+      userName: prevData['username'],
+      address: prevData['address'],
+      email: prevData['email'],
+      photoUrl: prevData['photoUrl'],
+      isApproved: prevData['isApproved'],
+      referal: prevData['referal'],
+      vechileName: _addNameController.text,
+      vechileType: _addTypeController.text,
+      vechilRegistration: _addRegController.text,
+    );
+    if (res == 'added successfully') {
+      Navigator.of(context).pushReplacement(MaterialPageRoute(
+        builder: (context) => const MainScreen(),
+      ));
+    }
   }
 
   _selectImage() {
@@ -155,6 +164,13 @@ class _VehicleSettingsState extends State<VehicleSettings> {
       }
     }
     print('this is SignUPUser $_emailController');
+  }
+
+  @override
+  void initState() {
+    getPrevData();
+    // TODO: implement initState
+    super.initState();
   }
 
   @override
@@ -344,5 +360,15 @@ class _VehicleSettingsState extends State<VehicleSettings> {
         ),
       ),
     );
+  }
+
+  void getPrevData() async {
+    DocumentSnapshot snap = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .get();
+    print(snap.data());
+    prevData = snap.data();
+    print('..................' + prevData.toString());
   }
 }

@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:returnpostuser/authentication/signinpage.dart';
 import 'package:returnpostuser/privacypolicy/privacypolicy.dart';
+import 'package:returnpostuser/services/authmethods.dart';
 import 'package:returnpostuser/services/database_services.dart';
 import 'package:returnpostuser/utils/utils.dart';
 
@@ -116,11 +117,11 @@ class _SignUpPageState extends State<SignUpPage> {
         CircularProgressIndicator();
         _isLoading = true;
       });
-      String res = await DataBaseMethods().registerUser(
+      String res = await AuthMethods().signUpUser(
         email: _emailController.text,
         password: _passwordController.text,
-        username: _usernameController.text,
-        referalCode: _refreralController.text,
+        userName: _usernameController.text,
+        referal: _refreralController.text,
         address: _addressController.text,
         file: _image!,
       );
@@ -128,7 +129,7 @@ class _SignUpPageState extends State<SignUpPage> {
       setState(() {
         _isLoading = false;
       });
-      if (res == "added successfully") {
+      if (res == "Success") {
         Navigator.push(
           context,
           MaterialPageRoute(
