@@ -189,7 +189,7 @@ class _VehicleSettingsState extends State<VehicleSettings> {
                   width: double.infinity,
                   margin: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
                   child: Text(
-                    'Add Vahicle Info',
+                    'Add Vehicle Info',
                     textAlign: TextAlign.center,
                     style: GoogleFonts.getFont(
                       'Montserrat',

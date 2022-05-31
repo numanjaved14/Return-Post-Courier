@@ -17,6 +17,7 @@ class _SigninpageState extends State<Signinpage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final formKey = GlobalKey<FormState>();
+  bool _isLoading = false;
 
   bool formStateLoading = false;
   @override
@@ -154,10 +155,11 @@ class _SigninpageState extends State<Signinpage> {
                       borderRadius: BorderRadius.circular(24)),
                 ),
                 onPressed: () async {
-                  if (formKey.currentState!.validate())
+                  if (formKey.currentState!.validate()) {
                     setState(() {
-                      formStateLoading = true;
+                      _isLoading = true;
                     });
+                  }
                   await DataBaseMethods()
                       .loginUser(
                         _emailController.text,
@@ -167,44 +169,51 @@ class _SigninpageState extends State<Signinpage> {
                         (value) => Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (builder) => MainScreen(
+                            builder: (builder) => const MainScreen(
                                 // title: '',
                                 ),
                           ),
                         ),
                       );
                   setState(() {
-                    formStateLoading = false;
+                    _isLoading = false;
                   });
                 },
-                child: Text(
-                  'Sign In',
-                  style: GoogleFonts.getFont('Montserrat',
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                      fontSize: 15,
-                      fontStyle: FontStyle.normal),
-                ),
+                child: _isLoading == true
+                    ? const Center(
+                        child: CircularProgressIndicator.adaptive(),
+                      )
+                    : Text(
+                        'Sign In',
+                        style: GoogleFonts.getFont('Montserrat',
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                            fontSize: 15,
+                            fontStyle: FontStyle.normal),
+                      ),
               ),
             ),
             Container(
-                margin: EdgeInsets.symmetric(vertical: 15),
-                child: Center(
-                    child: TextButton(
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (builder) => SignUpPage()));
-                        },
-                        child: Text(
-                          'Sign Up',
-                          style: GoogleFonts.getFont('Montserrat',
-                              fontWeight: FontWeight.w600,
-                              color: Color(0xffEB5757),
-                              fontSize: 15,
-                              fontStyle: FontStyle.normal),
-                        )))),
+              margin: const EdgeInsets.symmetric(vertical: 15),
+              child: Center(
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (builder) => const SignUpPage()));
+                  },
+                  child: Text(
+                    'Sign Up',
+                    style: GoogleFonts.getFont('Montserrat',
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xffEB5757),
+                        fontSize: 15,
+                        fontStyle: FontStyle.normal),
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),

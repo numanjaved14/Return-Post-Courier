@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -124,19 +122,32 @@ class _MainScreenState extends State<MainScreen> {
                 ),
               )
             : Scaffold(
-                body: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      'You are not approved by the admin yet',
-                      style: Theme.of(context).textTheme.headline5,
-                    ),
-                    Text(
-                      'You will soon contacted by our team',
-                      style: Theme.of(context).textTheme.subtitle2,
-                    ),
-                  ],
+                backgroundColor: Colors.grey.shade800,
+                body: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        'You are not approved by the admin yet',
+                        style: Theme.of(context)
+                            .textTheme
+                            .headline5!
+                            .copyWith(color: Colors.white),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Text(
+                        'You will soon contacted by our team',
+                        style: Theme.of(context)
+                            .textTheme
+                            .subtitle2!
+                            .copyWith(color: Colors.white),
+                      ),
+                    ],
+                  ),
                 ),
               );
   }

@@ -203,7 +203,7 @@ class _PrivacyPolicyState extends State<PrivacyPolicy> {
               // timeDilation != 1.0,
               onChanged: (bool? value) {
                 setState(() {
-                  _selectedvalue2 = value!;
+                  _selectedvalue4 = value!;
 
                   // timeDilation = value! ? 3.0 : 1.0;
                 });

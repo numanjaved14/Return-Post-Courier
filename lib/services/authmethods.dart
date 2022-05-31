@@ -49,6 +49,7 @@ class AuthMethods {
           referal: referal,
           photoUrl: photoUrl,
           isApproved: false,
+          isDeclined: false,
         );
 
         _firebaseFirestore.collection('users').doc(_auth.currentUser!.uid).set(

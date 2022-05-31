@@ -6,7 +6,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:returnpostuser/authentication/signinpage.dart';
 import 'package:returnpostuser/privacypolicy/privacypolicy.dart';
 import 'package:returnpostuser/services/authmethods.dart';
-import 'package:returnpostuser/services/database_services.dart';
 import 'package:returnpostuser/utils/utils.dart';
 
 class SignUpPage extends StatefulWidget {
@@ -114,7 +113,6 @@ class _SignUpPageState extends State<SignUpPage> {
   signUpUser() async {
     if (formKey.currentState!.validate()) {
       setState(() {
-        CircularProgressIndicator();
         _isLoading = true;
       });
       String res = await AuthMethods().signUpUser(
@@ -391,8 +389,8 @@ class _SignUpPageState extends State<SignUpPage> {
                 Center(
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      primary: Color(0xffEB5757),
-                      fixedSize: Size(310, 60),
+                      primary: const Color(0xffEB5757),
+                      fixedSize: const Size(310, 60),
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(23)),
                     ),
@@ -411,14 +409,18 @@ class _SignUpPageState extends State<SignUpPage> {
                     //   // Navigator.push(context,
                     //   //     MaterialPageRoute(builder: (context) => PrivacyPolicy()));
                     // },
-                    child: Text(
-                      'SignUp',
-                      style: GoogleFonts.getFont('Montserrat',
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                          fontSize: 15,
-                          fontStyle: FontStyle.normal),
-                    ),
+                    child: _isLoading == true
+                        ? const Center(
+                            child: CircularProgressIndicator.adaptive(),
+                          )
+                        : Text(
+                            'SignUp',
+                            style: GoogleFonts.getFont('Montserrat',
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                                fontSize: 15,
+                                fontStyle: FontStyle.normal),
+                          ),
                   ),
                 ),
                 Container(

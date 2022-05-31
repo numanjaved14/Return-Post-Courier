@@ -52,6 +52,7 @@ class DataBaseMethods {
           referal: referalCode,
           address: address,
           isApproved: false,
+          isDeclined: false,
         );
 
         await _firestore.collection('users').doc(cred.user!.uid).set(
@@ -148,26 +149,30 @@ class DataBaseMethods {
         //   vehicleType: vechileType,
         //   file: documentUrl,
         // );
-        model.UserModel user = model.UserModel(
-          photoUrl: photoUrl,
-          vehicleName: vechileName,
-          vehicleRegNo: vechilRegistration,
-          vehicleType: vechileType,
-          email: email,
-          username: userName,
-          uid: _firebaseAuth.currentUser!.uid,
-          // password: password,
-          address: address,
-          referal: referal,
-          // photoUrl: photoUrl,
-          isApproved: false,
-        );
+        // model.UserModel user = model.UserModel(
+        //   photoUrl: photoUrl,
+        //   vehicleName: vechileName,
+        //   vehicleRegNo: vechilRegistration,
+        //   vehicleType: vechileType,
+        //   email: email,
+        //   username: userName,
+        //   uid: _firebaseAuth.currentUser!.uid,
+        //   // password: password,
+        //   address: address,
+        //   referal: referal,
+        //   // photoUrl: photoUrl,
+        //   isApproved: false,
+        // );
         await _firestore
             .collection('users')
             .doc(_firebaseAuth.currentUser!.uid)
             .update(
-              user.toJSon(),
-            );
+          {
+            'vehicleName': vechileName,
+            'vehicleRegNo': vechilRegistration,
+            'vehicleType': vechileType,
+          },
+        );
         return res = 'added successfully';
       } catch (e) {
         print(e.toString());
