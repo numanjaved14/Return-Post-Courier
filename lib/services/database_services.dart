@@ -13,7 +13,7 @@ class DataBaseMethods {
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   Future<UserModel> getUserDetails() async {
-    User currentUser = _firebaseAuth.currentUser!;
+    User? currentUser = _firebaseAuth.currentUser;
 
     DocumentSnapshot snap = await _firestore
         .collection('user')
