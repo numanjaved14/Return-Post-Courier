@@ -47,6 +47,35 @@ class LocationMethods {
     return latlong;
   }
 
+  Future<List<double>> listenOrderLocation({required String orderId}) async {
+    List<double> latlong = [];
+    locationSubscription = location.onLocationChanged.handleError((onError) {
+      print(onError);
+      locationSubscription?.cancel();
+      // setState(() {
+      //   locationSubscription = null;
+      // });
+    }).listen((loc.LocationData currentlocation) async {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .set({
+        'latitude': currentlocation.latitude,
+        'longitude': currentlocation.longitude,
+      }, SetOptions(merge: true));
+      await FirebaseFirestore.instance
+          .collection('locations')
+          .doc(orderId)
+          .set({
+        'latitude': currentlocation.latitude,
+        'longitude': currentlocation.longitude,
+      }, SetOptions(merge: true));
+      latlong.addAll({currentlocation.latitude!, currentlocation.longitude!});
+    });
+    debugPrint(latlong.toString());
+    return latlong;
+  }
+
   stopListening() {
     locationSubscription?.cancel();
     // setState(() {

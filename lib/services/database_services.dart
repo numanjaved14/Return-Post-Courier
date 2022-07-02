@@ -180,4 +180,20 @@ class DataBaseMethods {
     }
     return res;
   }
+
+  Future<String> AcceptOrder({
+    required String orderId,
+  }) async {
+    String res = "Some Error Occured";
+    try {
+      await _firestore
+          .collection('locations')
+          .doc(orderId)
+          .update({'orderStatus': 'Courier on the way'});
+      return res = 'success';
+    } catch (e) {
+      return res = e.toString();
+    }
+    return res;
+  }
 }

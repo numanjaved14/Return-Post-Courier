@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:returnpostuser/mainscreen/maptracking.dart';
+import 'package:returnpostuser/services/database_services.dart';
 import 'package:returnpostuser/services/location_methods.dart';
 import 'package:returnpostuser/widgets/mydrawer.dart';
 import 'package:location/location.dart' as loc;
@@ -79,6 +80,11 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return isLoading
         ? const Center(
@@ -147,13 +153,38 @@ class _MainScreenState extends State<MainScreen> {
                                         FirebaseAuth
                                             .instance.currentUser!.uid &&
                                     snapshot.data!.docs[i]
-                                            .data()['courierStatus'] !=
-                                        'Completed') {
+                                            .data()['orderStatus'] ==
+                                        "Acceptance Pending") {
+                                  debugPrint(
+                                      'Courier on the way: false..............');
+                                  customerSnap = snapshot.data!.docs[i].data();
                                   WidgetsBinding.instance
                                       .addPostFrameCallback((_) {
                                     showFirsttModal(context);
                                     customerSnap =
                                         snapshot.data!.docs[i].data();
+                                  });
+                                }
+                                if (snapshot.data!.docs[i]
+                                            .data()['courierId'] ==
+                                        FirebaseAuth
+                                            .instance.currentUser!.uid &&
+                                    snapshot.data!.docs[i]
+                                            .data()['orderStatus']
+                                            .toString() ==
+                                        "Courier on the way") {
+                                  debugPrint(
+                                      'Courier on the way: true..............');
+                                  customerSnap = snapshot.data!.docs[i].data();
+                                  WidgetsBinding.instance
+                                      .addPostFrameCallback((_) {
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (builder) => MapTracking(
+                                            orderId: customerSnap!['orderId']),
+                                      ),
+                                    );
                                   });
                                 }
                               }
@@ -881,17 +912,22 @@ class _MainScreenState extends State<MainScreen> {
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(23)),
                             ),
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (builder) {
-                                    return MapTracking();
-                                  },
-                                ),
-                              );
+                            onPressed: () async {
+                              String res = await DataBaseMethods()
+                                  .AcceptOrder(orderId: data!['orderId']);
+                              if (res == 'success') {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (builder) => MapTracking(
+                                        orderId: customerSnap!['orderId']),
+                                  ),
+                                );
+                              } else {
+                                debugPrint('Some error occured. $res');
+                              }
                             },
-                            child: Text(
+                            child: const Text(
                               'Start navigation',
                               style: TextStyle(fontSize: 20),
                             ),
