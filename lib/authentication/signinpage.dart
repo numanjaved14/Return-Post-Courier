@@ -162,7 +162,7 @@ class _SigninpageState extends State<Signinpage> {
                   }
                   await DataBaseMethods()
                       .loginUser(
-                        _emailController.text,
+                        _emailController.text.trim(),
                         _passwordController.text,
                       )
                       .then(

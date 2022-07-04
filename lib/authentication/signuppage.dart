@@ -116,7 +116,7 @@ class _SignUpPageState extends State<SignUpPage> {
         _isLoading = true;
       });
       String res = await AuthMethods().signUpUser(
-        email: _emailController.text,
+        email: _emailController.text.trim(),
         password: _passwordController.text,
         userName: _usernameController.text,
         referal: _refreralController.text,
